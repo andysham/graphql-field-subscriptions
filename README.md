@@ -140,11 +140,11 @@ Then we get the return value as desired. However, what if we wanted the value of
 This library supplies a single function, `patchFieldSubscriptions`, which allows for this functionality. If we do the following,
 
 ```javascript
-import { patchResolverMap } from 'graphql-field-subscriptions'
+import { patchFieldSubscriptions } from 'graphql-field-subscriptions'
 
 ...
 
-const resolverMap = patchResolverMap({
+const resolverMap = patchFieldSubscriptions({
     Subscription: {
         hello: {
             subscribe: () => toAsyncIterator({ hello: {} })
@@ -173,12 +173,12 @@ We now get the following result,
 }
 ```
 
-Not only this, but the value of world, as well as any values at a further depth, can mutate over time.
+Not only this, but the value of `world`, as well as any values at a further depth, can mutate over time.
 
 ```javascript
 ...
 
-const resolverMap = patchResolverMap({
+const resolverMap = patchFieldSubscriptions({
     ...
     Hello: {
         world: {
