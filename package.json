@@ -1,6 +1,6 @@
 {
     "name": "graphql-field-subscriptions",
-    "version": "1.0.3",
+    "version": "1.0.4",
     "description": "",
     "main": "dist/index.js",
     "scripts": {
@@ -11,10 +11,10 @@
     "author": "",
     "license": "ISC",
     "dependencies": {
-        "events": "^3.1.0"
+        "events": "^3.1.0",
+        "graphql-tools": "^6.0.9"
     },
     "peerDependencies": {
-        "graphql": "^15.1.0",
-        "graphql-tools": "^6.0.9"
+        "graphql": "^15.1.0"
     }
 }

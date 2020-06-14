@@ -7,13 +7,13 @@ This library allows GraphQL.js servers to treat subscriptions much like queries,
 For npm users,
 
 ```
-$ npm install graphql-field-subscriptions
+$ npm install graphql graphql-field-subscriptions
 ```
 
 For yarn users,
 
 ```
-$ yarn add graphql-field-subscriptions
+$ yarn add graphql graphql-field-subscriptions
 ```
 
 This library supports TypeScript by default, as God intended
