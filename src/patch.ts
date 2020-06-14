@@ -100,17 +100,17 @@ export const patchResolver = (o: IFieldResolverOptions): IFieldResolverOptions =
                                 const it = mapAsyncIterator(
                                     (async function* () {
                                         const resolver = fieldResolvers[field]
-                                        if ("subscribe" in resolver) {
+                                        if ("subscribe" in resolver && resolver.subscribe) {
                                             yield* cleanGraphQLSubscriptionFormat(
                                                 await toAsync(
-                                                    resolver.subscribe!(value, args, ctx, info)
+                                                    resolver.subscribe(value, args, ctx, info)
                                                 ),
                                                 field
                                             )
-                                        } else if ("resolve" in resolver) {
+                                        } else if ("resolve" in resolver && resolver.resolve) {
                                             yield* cleanGraphQLSubscriptionFormat(
                                                 await toAsync(
-                                                    resolver.resolve!(value, args, ctx, info)
+                                                    resolver.resolve(value, args, ctx, info)
                                                 ),
                                                 field
                                             )
