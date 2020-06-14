@@ -132,26 +132,48 @@ interface AsyncIteratorPromise {
 export const predictAsyncIterator = async function* <T>(
     it: AsyncIterableIterator<T>
 ): AsyncIterableIterator<[T, AsyncIteratorPromise]> {
-    const fs = new Map<T, (() => void)[]>()
-    let onNext = () => {}
-    for await (const v of it) {
-        onNext()
-        fs.set(v, [])
-        let o: Partial<AsyncIteratorPromise> = { hasNext: false }
+    let prevResult = await it.next()
+    while (true) {
+        if (prevResult.done) {
+            yield [
+                prevResult.value,
+                {
+                    hasNext: true,
+                    onNext: f => f(),
+                    awaitNext: () => new Promise(res => res()),
+                },
+            ]
+            return
+        }
+
+        const next = it.next()
+        const prevResultSecure = prevResult
+
+        let hasNext = false
+        const fs = [] as (() => void)[]
+
+        const evalThread = (async () => {
+            const result = await next
+            hasNext = true
+            await Promise.all(fs.map(async f => f()))
+            prevResult = result
+        })()
+
+        let o: Partial<AsyncIteratorPromise> = {
+            get hasNext(): boolean {
+                return hasNext
+            },
+        }
         o.onNext = f => {
             if (o.hasNext) f()
-            else fs.get(v)!.push(f)
+            else fs.push(f)
         }
         o.awaitNext = () => {
             return new Promise(o.onNext!)
         }
-        onNext = () => {
-            o.hasNext = true
-            const handlers = fs.get(v) ?? []
-            fs.delete(v)
-            Promise.all(handlers.map(async h => h()))
-        }
-        yield [v, o as AsyncIteratorPromise]
+
+        yield [prevResultSecure.value, o as AsyncIteratorPromise]
+        await evalThread
     }
 }
 
