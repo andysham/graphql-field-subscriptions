@@ -51,6 +51,7 @@ export const isUnionType = isXType("union") as (t: any) => t is GraphQLUnionType
 export const isEnumType = isXType("enum") as (t: any) => t is GraphQLEnumType
 export const isListType = isXType("list") as (t: any) => t is GraphQLList<any>
 export const isNonNullType = isXType("non-null") as (t: any) => t is GraphQLNonNull<any>
+export const isNullableType = (t: any): boolean => !isXType("non-null")(t)
 
 /**
  * Any GraphQL.js type which may (potentially) have subfields.

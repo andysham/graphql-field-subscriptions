@@ -135,14 +135,16 @@ export const predictAsyncIterator = async function* <T>(
     let prevResult = await it.next()
     while (true) {
         if (prevResult.done) {
-            yield [
-                prevResult.value,
-                {
-                    hasNext: true,
-                    onNext: f => f(),
-                    awaitNext: () => new Promise(res => res()),
-                },
-            ]
+            if (prevResult.value) {
+                yield [
+                    prevResult.value,
+                    {
+                        hasNext: true,
+                        onNext: f => f(),
+                        awaitNext: () => new Promise(res => res()),
+                    },
+                ]
+            }
             return
         }
 

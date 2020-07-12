@@ -5,7 +5,8 @@
     "main": "dist/index.js",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
-        "build": "tsc"
+        "build": "tsc",
+        "example": "ts-node-dev src/examples/test/main.ts -dev"
     },
     "keywords": [],
     "author": "",
@@ -16,5 +17,13 @@
     },
     "peerDependencies": {
         "graphql": "^15.1.0"
+    },
+    "devDependencies": {
+        "apollo": "^2.28.3",
+        "apollo-server-express": "^2.15.0",
+        "cors": "^2.8.5",
+        "express": "^4.17.1",
+        "ts-node-dev": "^1.0.0-pre.49",
+        "typescript": "^3.9.5"
     }
 }
