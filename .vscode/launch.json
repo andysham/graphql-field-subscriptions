@@ -7,10 +7,19 @@
         {
             "type": "node",
             "request": "launch",
+            "name": "Server - No OBS",
+            "program": "${workspaceFolder}/src/examples/test/main.ts",
+            "preLaunchTask": "npm: build",
+            "args": ["-ignoreObs"],
+            "outFiles": ["${workspaceFolder}/dist/**/*.js"]
+        },
+        {
+            "type": "node",
+            "request": "launch",
             "name": "Server",
             "program": "${workspaceFolder}/src/examples/test/main.ts",
             "preLaunchTask": "npm: build",
             "outFiles": ["${workspaceFolder}/dist/**/*.js"]
-        }
+        },
     ]
 }

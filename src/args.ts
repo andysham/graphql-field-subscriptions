@@ -1,6 +1,8 @@
 import { GraphQLResolveInfo, FieldNode, GraphQLObjectType } from "graphql"
 import { getSubfields, parseValueNode } from "./ast"
 
+type Path = GraphQLResolveInfo["path"]
+
 /**
  * Given the GraphQLResolveInfo of a parent field, (and all necessary surrounding information),
  * derive the args and info parameters for the subscribe resolver in all current fields.
@@ -30,7 +32,7 @@ export const descendFields = <TArgs extends Record<string, any>>(
         ...(hasFields(type.name) ? getFields(type.name).values() : getFields().values()),
     ]
 
-    let basePath = arrayKeys.reduce((prev, key) => ({ prev, key }), info.path)
+    let basePath = arrayKeys.reduce((prev, key, index) => ({ prev, key, typename: index === 0 ? type.name : undefined }), info.path)
 
     return new Map(
         fieldNodes.map(node => {
@@ -48,7 +50,7 @@ export const descendFields = <TArgs extends Record<string, any>>(
                 fieldNodes,
                 parentType: type,
                 returnType,
-                path: { prev: basePath, key: fieldName },
+                path: { prev: basePath, key: fieldName, typename: arrayKeys.length == 0 ? type.name : undefined } as Path,
             }
 
             return [

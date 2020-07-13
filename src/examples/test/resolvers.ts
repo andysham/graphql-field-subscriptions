@@ -12,18 +12,41 @@ export const resolverMap = {
                 })(),
         },
     },
+    NodeBuffer: {
+        node: {
+            subscribe: () => {
+
+                return (async function* () {
+                    let count = 0
+                    while (true) {
+                        yield { node: { leaf: `ho${count}` } }
+                        count++
+                        await wait(1000)
+                    }
+                })()
+            }
+        }
+    },
     Root: {
-        node1: () => ({ leaf: "hey" }),
+        node1: {
+            resolve: function() {    
+                return ({ leaf: "brim bram" }) 
+            },
+        },
         node2: {
-            subscribe: () =>
-                async function* () {
+            subscribe: () => {
+
+                return (async function* () {
                     let count = 0
                     while (true) {
                         yield { node2: { leaf: `ho${count}` } }
+                        count++
                         await wait(1000)
                     }
-                },
+                })()
+            }
         },
+        nodebuffer: () => ({})
     },
     Node: {},
     Query: {},

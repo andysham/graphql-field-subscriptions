@@ -112,6 +112,9 @@ interface AsyncIteratorPromise {
     hasNext: boolean
     onNext: (f: () => void) => void
     awaitNext: () => Promise<void>
+    hasNextValue: boolean
+    onNextValue: (f: () => void) => void
+    awaitNextValue: () => Promise<void>
 }
 
 /**
@@ -142,6 +145,9 @@ export const predictAsyncIterator = async function* <T>(
                         hasNext: true,
                         onNext: f => f(),
                         awaitNext: () => new Promise(res => res()),
+                        hasNextValue: false,
+                        onNextValue: f => {},
+                        awaitNextValue: () => new Promise(() => {}),
                     },
                 ]
             }
@@ -152,11 +158,15 @@ export const predictAsyncIterator = async function* <T>(
         const prevResultSecure = prevResult
 
         let hasNext = false
-        const fs = [] as (() => void)[]
+        let hasNextValue = false
+        const onNextFs = [] as (() => void)[]
+        const onNextValueFs = [] as (() => void)[]
 
         const evalThread = (async () => {
             const result = await next
             hasNext = true
+            hasNextValue = result.value
+            const fs = hasNextValue ? [...onNextFs, ...onNextValueFs] : onNextFs
             await Promise.all(fs.map(async f => f()))
             prevResult = result
         })()
@@ -165,13 +175,23 @@ export const predictAsyncIterator = async function* <T>(
             get hasNext(): boolean {
                 return hasNext
             },
+            get hasNextValue(): boolean {
+                return hasNextValue
+            }
         }
         o.onNext = f => {
             if (o.hasNext) f()
-            else fs.push(f)
+            else onNextFs.push(f)
         }
         o.awaitNext = () => {
             return new Promise(o.onNext!)
+        }
+        o.onNextValue = f => {
+            if (o.hasNextValue) f()
+            else onNextValueFs.push(f)
+        }
+        o.awaitNextValue = () => {
+            return new Promise(o.onNextValue!)
         }
 
         yield [prevResultSecure.value, o as AsyncIteratorPromise]
@@ -258,6 +278,33 @@ export const cutAsyncIterator = async function* <T>(
     )) {
         if (v === false) return
         else yield v.value
+    }
+}
+
+/**
+ * Given an async iterator, and a promise, allow the iterator to return values until the promise
+ * resolves, in which case the iterator terminates.
+ * 
+ * Always allows at least one element from the iterator to yield through, if it exists.
+ */
+export const cutAfterOneAsyncIterator = async function* <T>(
+    it: AsyncIterableIterator<T>,
+    cut: Promise<any>
+): AsyncIterableIterator<T> {
+    let yielded = false
+    let cutted = false
+    for await (const v of mergeAsyncIterators<{ value: T } | false>(
+        mapAsyncIterator(it, value => ({ value })),
+        mapAsyncIterator(promiseToAsyncIterator(cut), () => false)
+    )) {
+        if (v === false) {
+            cutted = true
+            if (yielded) return
+        } else {
+            yielded = true
+            yield v.value
+            if (cutted) return
+        }
     }
 }
 

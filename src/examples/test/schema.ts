@@ -8,6 +8,11 @@ export const typeDefs = gql`
     type Root {
         node1: Node!
         node2: Node!
+        nodebuffer: NodeBuffer!
+    }
+
+    type NodeBuffer {
+        node: Node!
     }
 
     type Node {
