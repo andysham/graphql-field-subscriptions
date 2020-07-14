@@ -9,6 +9,7 @@ export const typeDefs = gql`
         node1: Node!
         node2: Node!
         nodebuffer: NodeBuffer!
+        nodes: [Node!]!
     }
 
     type NodeBuffer {

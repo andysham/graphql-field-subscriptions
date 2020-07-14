@@ -197,10 +197,13 @@ const patchSubscribeResolver = <TContext, TReturn = any>(
                     } else if (isArray(concreteType)) {
                         const iterators = [] as AsyncIterableIterator<[number, any]>[]
                         for (const [i, type] of concreteType.entries()) {
-                            iterators[i] = iterateValue(value[i], type as ConcreteType, [
-                                ...arrayPath,
-                                i,
-                            ])
+                            iterators[i] = mapAsyncIterator(
+                                iterateValue(value[i], type as ConcreteType, [
+                                    ...arrayPath,
+                                    i,
+                                ]),
+                                v => [i, v]
+                            )
                         }
 
                         const empty = Symbol("empty")

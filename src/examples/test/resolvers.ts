@@ -46,7 +46,21 @@ export const resolverMap = {
                 })()
             }
         },
-        nodebuffer: () => ({})
+        nodebuffer: () => ({}),
+        nodes: {
+            subscribe: () => {
+
+                return (async function* () {
+                    let count = 0
+                    while (true) {
+                        yield { nodes: [0,1,2,3].map(i => ({ leaf: `${i}-${count}` })) }
+                        count++
+                        await wait(1000)
+                    }
+                })()
+
+            }
+        }
     },
     Node: {},
     Query: {},
