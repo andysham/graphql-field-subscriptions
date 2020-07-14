@@ -195,6 +195,11 @@ const patchSubscribeResolver = <TContext, TReturn = any>(
 
                         return
                     } else if (isArray(concreteType)) {
+                        if (concreteType.length === 0) {
+                            yield []
+                            return
+                        }
+
                         const iterators = [] as AsyncIterableIterator<[number, any]>[]
                         for (const [i, type] of concreteType.entries()) {
                             iterators[i] = mapAsyncIterator(
