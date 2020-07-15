@@ -74,7 +74,7 @@ export const patchResolver = (o: IFieldResolverOptions): IFieldResolverOptions =
         if (op === "subscription" && !(RESOLVE_AS_NORMAL in parent))
             return parent[info.fieldName]
         else {
-            delete parent[RESOLVE_AS_NORMAL]
+            if (parent && RESOLVE_AS_NORMAL in parent) delete parent[RESOLVE_AS_NORMAL]
             return o.resolve!(parent, args, ctx, info)
         }
     }

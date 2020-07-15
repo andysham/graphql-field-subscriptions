@@ -22,5 +22,6 @@ export const typeDefs = gql`
 
     type Query {
         root: Root!
+        ping: String!
     }
 `

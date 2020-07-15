@@ -63,7 +63,9 @@ export const resolverMap = {
         }
     },
     Node: {},
-    Query: {},
+    Query: {
+        ping: () => 'pong'
+    },
 }
 
 export const resolvers = patchFieldSubscriptions(resolverMap)
