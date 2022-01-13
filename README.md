@@ -16,7 +16,7 @@ For yarn users,
 $ yarn add graphql graphql-field-subscriptions
 ```
 
-This library supports TypeScript by default, as God intended
+This library supports TypeScript by default.
 
 # The problem (in detail)
 
